@@ -1,0 +1,36 @@
+/* styles.css */
+@import "tailwindcss";
+
+/* Theme tokens */
+@theme {
+  --slide-width: 200px;
+  --slide-depth: 300px;
+  --panel-count: 6;
+}
+
+/* Load 3D utilities */
+@plugin "tailwindcss-3d";
+
+/* Carousel container */
+.carousel {
+  @apply relative w-full h-64 overflow-hidden perspective-[1000px];
+}
+
+/* Inner ring */
+.carousel-inner {
+  @apply absolute inset-0 transform-style-preserve-3d transition-transform duration-700 ease-in-out;
+}
+
+/* Each slide */
+.slide {
+  @apply absolute w-[var(--slide-width)] h-48 
+         left-1/2 top-1/2 
+         translate-x-[-50%] translate-y-[-50%];
+}
+/* Position slides around circle */
+@for $i from 0 through (var(--panel-count) - 1) {
+  .slide:nth-child(#{$i + 1}) {
+    transform: rotateY(calc(360deg / var(--panel-count) * #{$i}))
+      translateZ(var(--slide-depth));
+  }
+}
