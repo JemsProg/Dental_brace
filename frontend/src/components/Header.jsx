@@ -1,78 +1,127 @@
-import React, { useState } from "react";
-import Dental_logo from "../assets/dental_logo.png";
-import { Menu, X } from "lucide-react";
+// src/components/Header.jsx
+import { useState } from "react";
+import { Menu, X, Phone } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { FaTooth } from "react-icons/fa";
 
-const NAV_ITEMS = [
-  { name: "Home", href: "#home" },
-  { name: "About", href: "#about" },
-  { name: "Services", href: "#services" },
-  { name: "Reviews", href: "#reviews" },
-  { name: "Contact", href: "#contact" },
+const PHONE = "+639151777222";
+const nav = [
+  { name: "Home", to: "/" },
+  { name: "About", to: "/about" },
+  { name: "Services", to: "/services" },
 ];
 
-const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+export default function Header() {
+  const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
 
   return (
-    <header className="w-full">
-      <div className="flex items-center justify-between p-4 px-6 md:px-20">
-        {/* Logo on the left */}
-        <a href="#home" className="flex items-center">
-          <img
-            src={Dental_logo}
-            alt="Dental Braces Logo"
-            className="h-12 w-auto"
-          />
-          <span className="ml-3 text-2xl font-bold text-white">
+    // normal header (scrolls away). No sticky/fixed.
+    <header className="relative z-50 border-b border-white/20 shadow-md">
+      {/* Pink → deeper pink gradient + glass */}
+      <div
+        className="absolute inset-0 -z-10 bg-gradient-to-r
+                   from-primary-hover/95 via-primary/95 to-primary/85
+                   backdrop-blur-xl"
+        aria-hidden="true"
+      />
+
+      <div className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
+        {/* Icon logo */}
+        <Link to="/" className="group flex items-center gap-3">
+          <span
+            className="relative grid h-9 w-9 place-items-center rounded-2xl
+                           bg-gradient-to-br from-primary to-primary-hover
+                           ring-1 ring-white/30 shadow-sm text-secondary"
+          >
+            <FaTooth className="h-5 w-5" />
+            <span className="pointer-events-none absolute inset-0 rounded-2xl bg-white/20 opacity-0 transition-opacity group-hover:opacity-100" />
+          </span>
+          <span className="text-lg md:text-xl font-extrabold tracking-tight text-secondary">
             Dental Braces
           </span>
-        </a>
+        </Link>
 
         {/* Desktop nav */}
-        <nav>
-          <ul className="hidden md:flex space-x-8">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.name}>
-                <a
-                  href={item.href}
-                  className="text-gray-600 hover:text-gray-900 pb-1 border-b-2 border-transparent hover:border-blue-500 transition"
-                >
-                  {item.name}
-                </a>
-              </li>
-            ))}
+        <nav className="hidden md:block">
+          <ul className="flex items-center gap-1">
+            {nav.map((n) => {
+              const active =
+                pathname === n.to ||
+                (n.to !== "/" && pathname.startsWith(n.to));
+              return (
+                <li key={n.name}>
+                  <Link
+                    to={n.to}
+                    className={`px-3 py-2 rounded-md transition inline-flex items-center ${
+                      active
+                        ? "text-secondary bg-white/20"
+                        : "text-secondary/90 hover:text-secondary hover:bg-white/10"
+                    }`}
+                  >
+                    {n.name}
+                  </Link>
+                </li>
+              );
+            })}
+            <li className="pl-2">
+              <a
+                href={`tel:${PHONE}`}
+                className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-primary hover:bg-accent transition shadow-sm"
+              >
+                <Phone size={18} />
+                <span className="hidden lg:inline">Book Now</span>
+              </a>
+            </li>
           </ul>
         </nav>
 
-        {/* Mobile menu button */}
+        {/* Mobile toggle */}
         <button
-          className="md:hidden text-black focus:outline-none"
-          onClick={() => setMenuOpen((o) => !o)}
+          onClick={() => setOpen((v) => !v)}
+          className="md:hidden rounded-md p-2 text-secondary hover:bg-white/10 transition"
+          aria-label="Toggle menu"
         >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile nav panel */}
-      {menuOpen && (
-        <nav className="md:hidden bg-white">
-          <ul className="flex flex-col space-y-4 p-4">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.name}>
-                <a
-                  href={item.href}
-                  className="block text-gray-600 hover:text-gray-900 pb-1 border-b-2 border-transparent hover:border-blue-500 transition"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item.name}
-                </a>
-              </li>
-            ))}
+      {/* Mobile drawer */}
+      {open && (
+        <nav className="md:hidden border-t border-white/20 bg-gradient-to-b from-primary-hover/95 via-primary/95 to-primary/85 backdrop-blur-xl">
+          <ul className="flex flex-col p-3">
+            {nav.map((n) => {
+              const active =
+                pathname === n.to ||
+                (n.to !== "/" && pathname.startsWith(n.to));
+              return (
+                <li key={n.name}>
+                  <Link
+                    to={n.to}
+                    onClick={() => setOpen(false)}
+                    className={`block rounded-lg px-3 py-3 transition ${
+                      active
+                        ? "text-secondary bg-white/20"
+                        : "text-secondary/90 hover:text-secondary hover:bg-white/10"
+                    }`}
+                  >
+                    {n.name}
+                  </Link>
+                </li>
+              );
+            })}
+            <li className="mt-2">
+              <a
+                href={`tel:${PHONE}`}
+                onClick={() => setOpen(false)}
+                className="flex items-center justify-center gap-2 rounded-lg bg-secondary px-4 py-3 text-primary hover:bg-accent transition"
+              >
+                <Phone size={18} /> Call {PHONE}
+              </a>
+            </li>
           </ul>
         </nav>
       )}
     </header>
   );
-};
-
-export default Header;
+}

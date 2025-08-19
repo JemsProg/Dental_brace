@@ -1,36 +1,32 @@
 /* styles.css */
 @import "tailwindcss";
 
-/* Theme tokens */
+/* Add to a global CSS if you go back to horizontal scroll */
+.scroll-smoothbar {
+  scrollbar-width: none; /* Firefox */
+}
+.scroll-smoothbar::-webkit-scrollbar {
+  display: none;
+} /* WebKit */
+
 @theme {
-  --slide-width: 200px;
-  --slide-depth: 300px;
-  --panel-count: 6;
+  --color-primary: #ff65c3; /* brand pink */
+  --color-primary-hover: #e37aba; /* ~15% darker for hover */
+  --color-secondary: #ffffff; /* white from the DB letters */
+  --color-accent: #ede7e3; /* warm off-white from the smile mark */
 }
 
-/* Load 3D utilities */
-@plugin "tailwindcss-3d";
-
-/* Carousel container */
-.carousel {
-  @apply relative w-full h-64 overflow-hidden perspective-[1000px];
+/* Handy utilities (no plugins needed) */
+@utility backdrop-glass {
+  @apply bg-white/70 backdrop-blur-xl border border-white/30;
 }
-
-/* Inner ring */
-.carousel-inner {
-  @apply absolute inset-0 transform-style-preserve-3d transition-transform duration-700 ease-in-out;
-}
-
-/* Each slide */
-.slide {
-  @apply absolute w-[var(--slide-width)] h-48 
-         left-1/2 top-1/2 
-         translate-x-[-50%] translate-y-[-50%];
-}
-/* Position slides around circle */
-@for $i from 0 through (var(--panel-count) - 1) {
-  .slide:nth-child(#{$i + 1}) {
-    transform: rotateY(calc(360deg / var(--panel-count) * #{$i}))
-      translateZ(var(--slide-depth));
+/* Optional gentle float */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
   }
 }
